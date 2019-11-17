@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<main role="main">
+
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>{{product.name}}</h2>
+                <img src="{{product.image.url }}" width="300">
+                <p>{{product.description}}</p>
+                <form action="{% url 'cart:cart_add' product.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-secondary" value="Добавить в корзину »">
+                </form>
+            </div>
+        </div>
+        <hr>
+        {% if reviews %}
+        {% for review in reviews%}
+        <span style="font-weight: bold" >{{review.author}}</span>
+            <p>{{review.text}}</p>
+            Оценка: {{review.rate }}
+        {% endfor%}
+        {% else %}
+            <h6>Нет ни одного отзыва будте первым!</h6>
+        {% endif %}
+        <hr>
+
+        <div class="row">
+            <div class="col-lg-6 col-md-8 col-sm-12">
+
+                <h4>Оставьте отзыв:</h4>
+
+                <form action="{{product.get_absolute_url}}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.text_field.errors }}
+                        <label for="name">Имя</label><br>
+                        {{ form.name }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.description.errors }}
+                        <label for="content">Содержание</label><br>
+                        {{ form.description }}
+                    </div>
+                    {% for radio in form.radio_mark %}
+                    <div class="radio">
+                        {{ radio }}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">Оставить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</main>
+{% endblock %}
