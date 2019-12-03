@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout
 from .authentication import EmailAuthBackend
 from .forms import SignupForm
 
@@ -20,27 +19,28 @@ def signup(request):
 
 
 def log_in(request):
+    context = {}
     if request.method == 'POST':
         email_auth = EmailAuthBackend()
         user = email_auth.authenticate(
-            username=request.POST['username'],
-            password=request.POST['password']
+            email=request.POST.get('email'),
+            password=request.POST.get('password')
         )
         if user is not None:
             if user.is_active:
                 login(request, user)
                 return redirect('index')
             else:
-                return render(request, 'login.html',
-                              {'err': 'Аккаунт отключен!',
-                               'username': request.POST['username']
-                               })
+                context = {
+                    'err': 'Аккаунт отключен!',
+                    'username': request.POST.get('username')
+                }
         else:
-            return render(request, 'login.html',
-                          {'err': 'Неверный логин или пароль!',
-                           'username': request.POST['username']
-                           })
-    return render(request, 'login.html')
+            context = {
+                'err': 'Неверный логин или пароль!',
+                'username': request.POST.get('username')
+            }
+    return render(request, 'login.html', context)
 
 
 def log_out(request):

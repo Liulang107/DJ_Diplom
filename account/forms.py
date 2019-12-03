@@ -17,3 +17,10 @@ class SignupForm(UserCreationForm):
         if cd['password1'] != cd['password2']:
             raise forms.ValidationError('Пароли не совпадают')
         return cd['password2']
+
+class LoginForm(forms.Form):
+    email = forms.EmailField()
+    password = forms.CharField(max_length=20, widget=forms.PasswordInput)
+
+    class Meta:
+        fields = ('email', 'password')
